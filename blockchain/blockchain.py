@@ -22,7 +22,7 @@ class Blockchain:
         self.chain = []
         self.create_block(proof = 1, previous_hash = '0')
     
-    def create_Block(self, proof, previous_hash):
+    def create_block(self, proof, previous_hash):
         block = {'index' : len(self.chain)+1,
                  'timestamp' : str(datetime.datetime.now()),
                  'proof': proof,
@@ -65,4 +65,37 @@ class Blockchain:
         return True
             
 # Part 2 - Blockchain Mining
+
+# Create Web Application
+app = Flask(__name__)
+# If 500 error, update Flask, restart Spyuder and execute next line
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+
+# Create Blockchain
+blockchain = Blockchain()
+
+# Mining new Block
+@app.route('/mine_block', methods=['GET'])
+def mine_block():
+    previous_block = blockchain.get_previous_block()
+    previous_proof = previous_block['proof']
+    proof = blockchain.proof_of_work(previous_proof)
+    previous_hash = blockchain.hash(previous_block)
+    block = blockchain.create_Block(proof, previous_hash)
+    response = {'message' : 'Congratulation, you mining a new block!',
+                'index' : block['index'],
+                'timestamp' : block['timestamp'],
+                'proof' : block['proof'],
+                'previous_hash' : block['previous_hash']}
+    return jsonify(response), 200
+
+# Get complete blockchain
+@app.route('/get_chain', methods=['GET'])
+def get_chain():
+    response = {'chain' : blockchain.chain,
+                'lenght' : len(blockchain.chain)}
+    return jsonify(response), 200
+
+# Execute Application
+app.run(host = '0.0.0.0', port = 5000)
 
