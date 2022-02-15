@@ -81,7 +81,7 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
-    block = blockchain.create_Block(proof, previous_hash)
+    block = blockchain.create_block(proof, previous_hash)
     response = {'message' : 'Congratulation, you mining a new block!',
                 'index' : block['index'],
                 'timestamp' : block['timestamp'],
